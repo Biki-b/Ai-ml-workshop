@@ -1,0 +1,43 @@
+#1 Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+#2 Load the dataset manually from a dictionary
+data = {
+    'index': list(range(1, 24)),
+    'ground_cleheight': [225, 232, 175, 168, 222, 170, 210, 218, 172, 232, 166, 178, 168, 225, 212, 171, 240, 176, 174, 205, 174, 205, 223],
+    'height': [1737, 1742, 1472, 1375, 1710, 1388, 1690, 1695, 1410, 1758, 1291, 1465, 1370, 1775, 1685, 1455, 1872, 1468, 1475, 1690, 1475, 1690, 1405],
+    'category': ['suv', 'suv', 'sedan', 'sedan', 'suv', 'sedan', 'suv', 'suv', 'sedan', 'suv', 'sedan',
+                 'sedan', 'sedan', 'suv', 'suv', 'sedan', 'suv', 'sedan', 'sedan', 'suv', 'suv', 'sedan', 'suv']
+}
+df = pd.DataFrame(data)
+
+#3 Display dataset
+print("Dataset:")
+print(df.head())
+
+#4 Check missing values
+print("\nMissing values:\n", df.isnull().sum())
+
+#5 Define features (X) and target (y)
+X = df[['ground_cleheight', 'height']]
+print("\nIndependent Features (X):\n", X.head())
+
+#6 Encode target labels
+le = LabelEncoder()
+y = le.fit_transform(df['category'])  # suv=1, sedan=0
+
+#7 Split dataset into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+#8 Train Random Forest model
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+#9 Predict and evaluate
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("\nModel Accuracy: {:.2f}%".format(accuracy * 100))
